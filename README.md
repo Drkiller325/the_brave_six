@@ -22,6 +22,9 @@
   - Redis for chache
   - Web sockets
 - API Gateway: Restfull API and gRPC for Service descovery
+## Game Rules and end conditions
+- the game will start like the ususal among us game with 6 heros and one disguised hero(the bad guy) and they will be trapped in a place until they discover the imposter but there's a catch! everyone will be able to kill anyone but the game will end if the hero kills the imposter or they finish the tasks and the imposter has to convince the other heros to kill eachother basically.
+- end condition: imposter dead or tasks completed
 ## Data Management
 here are some examples on how would some of the requests and thier responses look like in the different microservices in the game:
 ### 1. Authentication Service
