@@ -75,6 +75,8 @@ here are some examples on how would some of the requests and thier responses loo
     "error": "Invalid credentials"
 }
 ```
+---
+
 ### 2. Game Session Service
 - methode: POST
 - Endpoint: /game/create
@@ -128,6 +130,8 @@ here are some examples on how would some of the requests and thier responses loo
     "error": "Lobby not found"
 }
 ```
+---
+
 ### 3. Matchmaking Service
 - Methode: GET
 - Endpoint: /matchmaking/find
@@ -168,6 +172,8 @@ here are some examples on how would some of the requests and thier responses loo
     "error": "No match found yet"
 }
 ```
+---
+
 ### 4. Player Stats Service
 - methode: GET
 - Endpoint: /player/stats/{user_id}
@@ -180,6 +186,8 @@ here are some examples on how would some of the requests and thier responses loo
     "tasks_completed": 200
 }
 ```
+---
+
 ### 5. Chat Service
 - methode:POST
 - Endpoint /chat/send
@@ -197,3 +205,5 @@ here are some examples on how would some of the requests and thier responses loo
     "status": "Message sent"
 }
 ```
+## Deployment and Scaling
+- We can scale the game in the future horizontly using Docker containers.
