@@ -7,7 +7,8 @@
 - easier for scaling the game to manage the larger number of players in the game in the future using docker containers for example.
 - In a microservice architecture, the failure of one service (like the login for example) doesn't necesarly crash the whole game.
 ## Service Boundaries
-![image](https://github.com/user-attachments/assets/a3e1a487-fe4c-448a-a12a-8a145696a9a4)
+![image](https://github.com/user-attachments/assets/4ac87c99-6d19-43de-b81e-fd4cc2b4c128)
+
 - service1: the firts microservice will be responsible of handeling all of the player's data(his login info, friends and stats) as well as user managment protocols.
 - Service2: the secound service will handle the active game session amd all it's elements(movements, task progress, players status, chat and votes).
 ## Technology Stack and Communication Patterns
@@ -17,7 +18,7 @@
 - Game logic:
   - C#
 - Game session managment(serverside):
-  - python(Restfull API with flask)
+  - C#
   - postgreSQL
   - Redis for chache
   - Web sockets
@@ -78,99 +79,74 @@ here are some examples on how would some of the requests and thier responses loo
 ---
 
 ### 2. Game Session Service
-- methode: POST
-- Endpoint: /game/create
-- Request:
-```json
-{
-    "user_id": "abc123",
-    "game_settings": {
-        "max_players": 10,
-        "map": "space_station"
-    }
-}
+- On Lobby Creation
+- Response On success
 ```
-- Responses:
-**201 Game Created**
-```json
-{
-    "message": "Game created",
-    "game_id": "game567",
-    "lobby_code": "XYZ123"
-}
+ ws.send(JSON.stringify({
+        type: 'lobby-created',
+        lobbyId: lobbyId,
+        message: `Lobby ${lobbyId} created successfully.`,
+      }));
 ```
-**400 Bad Request**
+- On Gamestart
 ```
-{
-    "error": "Invalid game settings"
-}
-```
-- Methode: POST 
-- Endpoint: /game/join
-- Request:
-```json
-{
-    "user_id": "def456",
-    "lobby_code": "XYZ123"
-}
-```
-- Responses:
-**200 OK**
-```json
-{
-    "message": "Joined lobby",
-    "game_id": "game567",
-    "current_players": 5,
-    "max_players": 10
-}
-```
-**404 Not Found - Lobby code invalid**
-```
-{
-    "error": "Lobby not found"
-}
+ if (parsedMessage.type === 'start-game') {
+      broadcast(JSON.stringify({
+        type: 'game-start',
+        status: 1010, // Custom status code for game start
+        message: `Game session started by ${playerId}`
+      }));
 ```
 ---
 
 ### 3. Matchmaking Service
-- Methode: GET
-- Endpoint: /matchmaking/find
-- Request:
-```json
-{
-    "user_id": "abc123"
-}
+- through Websocket
+- On User connection:
 ```
-- Responses:
-**200 OK**
-```json
-{
-    "message": "Searching for game",
-    "estimated_wait_time": "20s"
-}
+broadcast(JSON.stringify({
+    type: 'player-join',
+    playerId: playerId,
+    message: `${playerId} joined the game.`
+  }));
 ```
-**500 Internal Server Error**
+- On joining
+- Request
 ```
-{
-    "error": "Failed to initiate matchmaking"
-}
+wss.on('connection', function connection(ws) {
+  //User unique ID
+  const playerId = `player-${Math.floor(Math.random() * 1000)}`;
+  players[playerId] = { id: playerId, connection: ws, status: 'connected' };
 ```
-- Methode: GET 
-- Endpoint: /matchmaking/status
-- Responses:
-**200 OK**
-```json
-{
-    "status": "Found match",
-    "game_id": "game567",
-    "lobby_code": "XYZ123"
-}
+- On Success
 ```
-**404 Not Found - No matches found**
+broadcastToLobby(lobbyId, JSON.stringify({
+          type: 'player-joined',
+          playerId: playerId,
+          message: `${playerId} joined the lobby.`,
+        }));
 ```
-{
-    "error": "No match found yet"
-}
+- to track all user position and Tasks
+```
+broadcast(JSON.stringify({
+        type: 'game-update',
+        playerId: parsedMessage.playerId,
+        position: parsedMessage.position
+      }));
+    }
+```
+- On leave
+- Request
+```
+ws.on('close', function close(code, reason) {
+    console.log(`${playerId} disconnected. Status code: ${code}, Reason: ${reason}`);
+```
+- On Success
+```
+broadcast(JSON.stringify({
+      type: 'player-leave',
+      playerId: playerId,
+      message: `${playerId} left the game.`
+    }));
 ```
 ---
 
@@ -189,21 +165,15 @@ here are some examples on how would some of the requests and thier responses loo
 ---
 
 ### 5. Chat Service
-- methode:POST
-- Endpoint /chat/send
-- Request:
-```json
-{
-    "user_id": "abc123",
-    "game_id": "game567",
-    "message": "Hello everyone!"
-}
+- chat service will be using websockets
+- On message
 ```
-- Response:
-```json
-{
-    "status": "Message sent"
-}
+broadcastToLobby(lobbyId, JSON.stringify({
+          type: 'lobby-chat',
+          playerId: playerId,
+          message: parsedMessage.message
+        }));
 ```
+
 ## Deployment and Scaling
 - We can scale the game in the future horizontly using Docker containers.
