@@ -15,7 +15,7 @@
 - User management(serverside):
   - python(RestFull API with flask)
   - mongoDB
-- Game logic:
+- Client application:
   - C#
 - Game session managment(serverside):
   - python(Restfull API with flask)
