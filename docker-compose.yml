@@ -1,0 +1,13 @@
+version: '3'
+services:
+  service1:
+    build:
+      context: UserManagement
+    ports:
+      - "5001:5000"
+
+  service2:
+    build:
+      context: GameSession
+    ports:
+      - "5002:5000"
