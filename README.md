@@ -1,4 +1,33 @@
 # the_brave_six (an among us clone with a twist)
+**In order to run the app**, have Docker installed on your machine and execute the following command:
+```
+docker-compose -f docker-compose.yml up --build
+```
+
+**In order to run the tests** for User management:
+
+1. Create a virtual environment
+
+
+        python -m vevn env
+
+2. Activate it
+
+
+        For Linux:   source env/bin/activate
+        For Windows: env\Scripts\activate
+
+3. Install the dependencies
+
+
+        pip install -r UserManagement/requirements.txt
+
+4. Run the tests
+
+
+        pytest UserManagement/test_user.py
+
+
 ## Application Suitability
 1. Why is this application relevant?
 - Among us is one of the most popular games for some time now with its easy to understand dynamic mechanics that appear very appealing for many people and in this project I'll try to recreate this hopefully simple game system. 
@@ -177,3 +206,12 @@ broadcastToLobby(lobbyId, JSON.stringify({
 
 ## Deployment and Scaling
 - We can scale the game in the future horizontly using Docker containers.
+
+## Service Boundries(Lab2)
+my plan to expand the system
+![image](https://github.com/user-attachments/assets/5a21c083-f7d7-4115-9c64-7f9fa525aa4a)
+1. Implement read replication for user data by setting up two dedicated read replicas to distribute and balance query load.
+2. Use a Two-Phase Commit (2PC) to ensure safe and atomic deletion of user data, removing all associated records and deregistering the user from any lobbies they participated in.
+3. Integrate a data warehouse to enable User data analysis like thier rank, preformance ,log time and different player metrics.
+4. Deploy the ELK stack to centralize and process logs across all system instances, enhancing monitoring and troubleshooting capabilities.
+5. Deploy a Redis cluster to enable sharded caching of user data using consistent hashing.
