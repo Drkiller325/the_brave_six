@@ -214,4 +214,4 @@ my plan to expand the system
 2. Use a Two-Phase Commit (2PC) to ensure safe and atomic deletion of user data, removing all associated records and deregistering the user from any lobbies they participated in.
 3. Integrate a data warehouse to enable User data analysis like thier rank, preformance ,log time and different player metrics.
 4. Deploy the ELK stack to centralize and process logs across all system instances, enhancing monitoring and troubleshooting capabilities.
-5. Deploy a Redis cluster to enable sharded caching of user data using consistent hashing.
+5. Deploy a Redis cluster to enable sharded caching of Session data using consistent hashing.
